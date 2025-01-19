@@ -1,4 +1,6 @@
-use crate::utils::error::FittingError;
+#![allow(dead_code)]
+
+use crate::utils::error::InterpolationError;
 
 pub enum PolyInterpolationMethod {
     Lagrange,
@@ -14,9 +16,9 @@ pub fn interpolate(
     x: Vec<f64>,
     y: Vec<f64>,
     method: PolyInterpolationMethod,
-) -> Result<Polynomial, FittingError> {
+) -> Result<Polynomial, InterpolationError> {
     if x.len() != y.len() {
-        return Err(FittingError::UnequalArrayLengths);
+        return Err(InterpolationError::UnequalArrayLengths);
     }
 
     match method {
@@ -25,7 +27,7 @@ pub fn interpolate(
     }
 }
 
-fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, FittingError> {
+fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, InterpolationError> {
     let n = x.len();
     let mut coefficients = vec![0.0; n];
 
@@ -36,7 +38,7 @@ fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, FittingErr
             if i != j {
                 let denominator = x[i] - x[j];
                 if denominator.abs() < f64::EPSILON {
-                    return Err(FittingError::DuplicateValues);
+                    return Err(InterpolationError::DuplicateValues);
                 }
 
                 term_coefficients = term_coefficients
@@ -65,7 +67,7 @@ fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, FittingErr
     })
 }
 
-fn newton_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, FittingError> {
+fn newton_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, InterpolationError> {
     let n = x.len();
     let mut divided_differences = y.to_vec();
 
@@ -74,7 +76,7 @@ fn newton_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, FittingError
         for i in (j..n).rev() {
             let denominator = x[i] - x[i - j];
             if denominator.abs() < f64::EPSILON {
-                return Err(FittingError::DuplicateValues);
+                return Err(InterpolationError::DuplicateValues);
             }
 
             divided_differences[i] = (divided_differences[i] - divided_differences[i - 1]) / denominator;

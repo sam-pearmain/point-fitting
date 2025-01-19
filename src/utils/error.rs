@@ -1,4 +1,6 @@
-pub enum FittingError {
+#[warn(dead_code)]
+
+pub enum InterpolationError {
     UnequalArrayLengths,
     DuplicateValues,
 }
