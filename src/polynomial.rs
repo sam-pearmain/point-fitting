@@ -8,7 +8,7 @@ pub enum PolyInterpolationMethod {
 }
 
 pub struct Polynomial {
-    degree: u16,
+    degree: usize,
     coefficients: Vec<f64>,
 }
 
@@ -28,11 +28,11 @@ pub fn interpolate(
 }
 
 fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, InterpolationError> {
-    let n = x.len();
-    let mut coefficients = vec![0.0; n];
+    let n: usize = x.len();
+    let mut coefficients: Vec<f64> = vec![0.0; n];
 
     for i in 0..n {
-        let mut term_coefficients = vec![1.0];
+        let mut term_coefficients: Vec<f64> = vec![1.0];
 
         for j in 0..n {
             if i != j {
@@ -62,7 +62,7 @@ fn lagrange_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, Interpolat
     }
 
     Ok(Polynomial{
-        degree: (n - 1) as u16,
+        degree: n - 1,
         coefficients
     })
 }
@@ -114,7 +114,18 @@ fn newton_interpolation(x: &[f64], y: &[f64]) -> Result<Polynomial, Interpolatio
     }
 
     Ok(Polynomial{
-        degree: (n - 1) as u16,
+        degree: n - 1,
         coefficients,
+    })
+}
+
+pub fn polynomial_regression(x: &[f64], y: &[f64], degree: usize) -> Result<Polynomial, InterpolationError> {
+    if x.len() != y.len() {
+        return Err(InterpolationError::UnequalArrayLengths);
+    }
+
+    Ok(Polynomial{
+        degree: degree,
+        coefficients: coefficients
     })
 }
